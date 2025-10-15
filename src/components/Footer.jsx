@@ -53,8 +53,8 @@ export default function Footer() {
           transition={{ duration: 0.6, delay: 0.8 }}
         >
           <h4 className="font-semibold mb-3 text-white">Contact Info</h4>
-          <p>📧 smart.events@gmail.com</p>
-          <p>📞 +91 9650843965</p>
+          <p>📧 eventxpertbusiness@gmail.com</p>
+          <p>📞 +91 7061935850</p>
           <div className="flex gap-4 mt-3 text-xl">
             {[
               { icon: "fab fa-facebook", color: "#3b82f6" },
