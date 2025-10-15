@@ -1,43 +1,32 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { User2, LogOut, Menu, X } from "lucide-react"; // Added Menu and X icons
-import { AnimatePresence } from "framer-motion"; // Added AnimatePresence for mobile menu
+import { User2, LogOut, Menu, X, LayoutDashboard } from "lucide-react";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // New state for mobile menu
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
-    logout(); // Use context logout
-    navigate("/login"); // Redirect to login page after logout
+    logout();
+    navigate("/login");
   };
 
-  const handleProfileClick = () => {
-    setShowProfileMenu(!showProfileMenu);
-  };
-
-  const handleProfileView = () => {
-    setShowProfileMenu(false);
-    navigate(getDashboardPath(user?.role));
-  };
-
-  // Helper function to get dashboard path based on role
   const getDashboardPath = (role) => {
-    switch (role) {
-      case "admin":
-        return "/admin";
-      case "organizer":
-        return "/organizer";
-      case "student":
-        return "/student";
-      default:
-        return "/login"; // Fallback or a generic dashboard if roles aren't defined
-    }
+    // Simplified this function for brevity in the example
+    if (role === "admin") return "/admin";
+    if (role === "organizer") return "/organizer";
+    return "/student";
   };
+  
+  const navLinks = [
+    { path: "/events", label: "Events" },
+    { path: "/about", label: "About" },
+    { path: "/contact", label: "Contact" },
+  ];
 
   // Variants for staggered animation
   const navItemVariants = {
@@ -45,260 +34,150 @@ export default function Navbar() {
     visible: (i) => ({
       opacity: 1,
       y: 0,
-      transition: { delay: i * 0.15, duration: 0.5 },
+      transition: { delay: i * 0.1, duration: 0.4 },
     }),
   };
 
-  // Nav Links
-  const navLinks = [
-    { path: "/events", label: "Events" },
-    { path: "/about", label: "About Us", highlight: true }, // Highlighted link
-    { path: "/contact", label: "Contact Us" }, // 👈 Contact page link
-  ];
+  const mobileMenuVariants = {
+      open: { opacity: 1, x: 0, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
+      closed: { opacity: 0, x: "100%" },
+  }
+
+  const mobileLinkVariants = {
+      open: { y: 0, opacity: 1 },
+      closed: { y: 20, opacity: 0 }
+  }
+
 
   return (
     <motion.nav
-      initial={{ y: -50, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      className="flex justify-between items-center px-10 py-6 bg-gray-900 text-white fixed top-0 left-0 w-full z-50 border-b border-white/10"
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="fixed top-0 left-0 w-full z-50 bg-slate-900/60 backdrop-blur-lg border-b border-slate-800/50"
     >
-      {/* Logo */}
-      <Link to="/">
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-xl font-bold flex items-center gap-2"
-        >
-          <span className="text-primary">📅 SmartEvents</span>
-        </motion.div>
-      </Link>
+      <div className="mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4">
+        {/* Logo */}
+        <Link to="/">
+          <div className="text-2xl font-bold flex items-center gap-2 bg-gradient-to-r from-cyan-400 to-purple-500 text-transparent bg-clip-text">
+            EvenXpert
+          </div>
+        </Link>
 
-      {/* Hamburger Menu Icon for Mobile */}
-      <div className="md:hidden flex items-center">
-        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-white focus:outline-none">
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Desktop Links */}
-      <ul className="hidden md:flex gap-8 text-gray-300">
-        {navLinks.map((link, i) => (
-          <motion.li
-            key={link.path || link.label}
-            custom={i}
-            initial="hidden"
-            animate="visible"
-            variants={navItemVariants}
-          >
-            <Link
-              to={link.path}
-              className={`hover:text-white transition ${
-                link.highlight
-                  ? "text-primary font-medium hover:text-primary"
-                  : ""
-              }`}
-            >
-              {link.label}
-            </Link>
-          </motion.li>
-        ))}
-
-        {isAuthenticated && user && (
-          <motion.li
-            custom={navLinks.length}
-            initial="hidden"
-            animate="visible"
-            variants={navItemVariants}
-          >
-            <Link to={getDashboardPath(user.role)} className="hover:text-white transition">
-              Dashboard
-            </Link>
-          </motion.li>
-        )}
-
-        {isAuthenticated ? (
-          <motion.li
-            custom={navLinks.length + (isAuthenticated && user ? 1 : 0)}
-            initial="hidden"
-            animate="visible"
-            variants={navItemVariants}
-            className="relative"
-          >
-            <motion.img
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              src={user?.profilePicture || "https://i.pravatar.cc/150?img=68"}
-              alt="Profile"
-              className="w-10 h-10 rounded-full cursor-pointer border-2 border-indigo-500 object-cover"
-              onClick={handleProfileClick}
-            />
-            {showProfileMenu && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.2 }}
-                className="absolute right-0 mt-2 w-48 bg-[#1f2937] rounded-md shadow-lg py-1 z-10"
-              >
-                <button
-                  onClick={handleProfileView}
-                  className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                >
-                  <User2 size={16} /> Profile
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700"
-                >
-                  <LogOut size={16} /> Logout
-                </button>
-              </motion.div>
-            )}
-          </motion.li>
-        ) : (
-          <>
-            <motion.li
-              custom={navLinks.length + (isAuthenticated && user ? 1 : 0)}
-              initial="hidden"
-              animate="visible"
-              variants={navItemVariants}
-            >
+        {/* Desktop Links (Center) */}
+        <ul className="hidden md:flex gap-2 items-center">
+          {navLinks.map((link, i) => (
+            <motion.li key={link.path} custom={i} initial="hidden" animate="visible" variants={navItemVariants}>
               <Link
-                to="/login"
-                className="hover:text-white transition"
+                to={link.path}
+                className="px-4 py-2 rounded-full text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
               >
-                Login
+                {link.label}
               </Link>
             </motion.li>
-            <motion.li
-              custom={navLinks.length + 1 + (isAuthenticated && user ? 1 : 0)}
-              initial="hidden"
-              animate="visible"
-              variants={navItemVariants}
-            >
+          ))}
+        </ul>
+
+        {/* Auth Buttons / Profile (Right) */}
+        <div className="hidden md:flex items-center gap-4">
+          {isAuthenticated ? (
+            <div className="relative">
+              <motion.img
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                src={user?.profilePicture || `https://avatar.vercel.sh/${user?.email}.png`}
+                alt="Profile"
+                className="w-10 h-10 rounded-full cursor-pointer border-2 border-cyan-500 object-cover"
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+              />
+              <AnimatePresence>
+                {showProfileMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute right-0 mt-2 w-56 bg-slate-800/80 backdrop-blur-lg border border-slate-700 rounded-lg shadow-lg py-2"
+                  >
+                    <div className="px-4 py-2 border-b border-slate-700">
+                        <p className="font-semibold text-white">{user?.name || "User"}</p>
+                        <p className="text-sm text-slate-400">{user?.email}</p>
+                    </div>
+                    <Link to={getDashboardPath(user?.role)} onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-700/50">
+                        <LayoutDashboard size={16} /> Dashboard
+                    </Link>
+                    <button onClick={handleLogout} className="flex items-center gap-3 w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-slate-700/50">
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <>
+              <Link to="/login" className="px-4 py-2 text-slate-300 hover:text-white transition-colors">
+                Login
+              </Link>
               <Link
                 to="/signup"
-                className="hover:text-white transition"
+                className="px-5 py-2 bg-cyan-500 text-slate-900 rounded-lg font-bold hover:bg-cyan-400 transition-colors"
               >
                 Sign Up
               </Link>
-            </motion.li>
-          </>
-        )}
-      </ul>
+            </>
+          )}
+        </div>
+
+        {/* Hamburger Menu Icon */}
+        <div className="md:hidden">
+          <button onClick={() => setMobileMenuOpen(true)} className="text-white">
+            <Menu size={28} />
+          </button>
+        </div>
+      </div>
 
       {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed top-0 right-0 h-full w-64 bg-gray-800 z-40 p-5 pt-28 shadow-lg md:hidden"
+            variants={mobileMenuVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
+            className="fixed inset-0 h-screen w-full bg-slate-900/80 backdrop-blur-xl z-50 md:hidden"
           >
-            {/* Close button for mobile menu */}
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setMobileMenuOpen(false)}
-              className="absolute top-5 right-5 text-gray-400 hover:text-white focus:outline-none"
-            >
-              <X size={24} />
-            </motion.button>
-            <ul className="flex flex-col gap-5 text-gray-300">
-              {navLinks.map((link, i) => (
-                <motion.li
-                  key={link.path || link.label}
-                  custom={i}
-                  initial="hidden"
-                  animate="visible"
-                  variants={navItemVariants}
-                >
+            <div className="flex justify-end p-5">
+                <button onClick={() => setMobileMenuOpen(false)} className="text-slate-300 hover:text-white">
+                    <X size={32} />
+                </button>
+            </div>
+            <ul className="flex flex-col items-center justify-center h-full gap-6 -mt-12">
+              {navLinks.map((link) => (
+                <motion.li key={`mobile-${link.path}`} variants={mobileLinkVariants}>
                   <Link
                     to={link.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`block py-2 text-lg hover:text-white transition ${
-                      link.highlight ? "text-primary font-medium hover:text-primary" : ""
-                    }`}
+                    className="block text-2xl text-slate-300 hover:text-cyan-400"
                   >
                     {link.label}
                   </Link>
                 </motion.li>
               ))}
-
-              {isAuthenticated && user && (
-                <motion.li
-                  custom={navLinks.length}
-                  initial="hidden"
-                  animate="visible"
-                  variants={navItemVariants}
-                >
-                  <Link
-                    to={getDashboardPath(user?.role)}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block py-2 text-lg hover:text-white transition"
-                  >
-                    Dashboard
-                  </Link>
-                </motion.li>
-              )}
-
-              {isAuthenticated ? (
-                <motion.li
-                  custom={navLinks.length + (isAuthenticated && user ? 1 : 0)}
-                  initial="hidden"
-                  animate="visible"
-                  variants={navItemVariants}
-                >
-                  <Link
-                    to={getDashboardPath(user?.role)} // Profile link goes to dashboard
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2 w-full text-left py-2 text-lg text-gray-300 hover:text-white"
-                  >
-                    <User2 size={20} /> Profile
-                  </Link>
-                  <button
-                    onClick={() => {handleLogout(); setMobileMenuOpen(false);}}
-                    className="flex items-center gap-2 w-full text-left py-2 text-lg text-red-400 hover:text-white"
-                  >
-                    <LogOut size={20} /> Logout
-                  </button>
-                </motion.li>
-              ) : (
-                <>
-                  <motion.li
-                    custom={navLinks.length + (isAuthenticated && user ? 1 : 0)}
-                    initial="hidden"
-                    animate="visible"
-                    variants={navItemVariants}
-                  >
-                    <Link
-                      to="/login"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block py-2 text-lg hover:text-white transition"
-                    >
-                      Login
-                    </Link>
-                  </motion.li>
-                  <motion.li
-                    custom={navLinks.length + 1 + (isAuthenticated && user ? 1 : 0)}
-                    initial="hidden"
-                    animate="visible"
-                    variants={navItemVariants}
-                  >
-                    <Link
-                      to="/signup"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block py-2 text-lg hover:text-white transition"
-                    >
-                      Sign Up
-                    </Link>
-                  </motion.li>
-                </>
-              )}
+              <div className="w-1/2 h-px bg-slate-700 my-4"></div>
+                {isAuthenticated ? (
+                     <>
+                        <motion.li variants={mobileLinkVariants}><Link to={getDashboardPath(user?.role)} onClick={() => setMobileMenuOpen(false)} className="block text-2xl text-slate-300 hover:text-cyan-400">Dashboard</Link></motion.li>
+                        <motion.li variants={mobileLinkVariants}><button onClick={handleLogout} className="text-2xl text-red-400">Logout</button></motion.li>
+                     </>
+                ) : (
+                    <>
+                        <motion.li variants={mobileLinkVariants}><Link to="/login" onClick={() => setMobileMenuOpen(false)} className="block text-2xl text-slate-300 hover:text-cyan-400">Login</Link></motion.li>
+                        <motion.li variants={mobileLinkVariants}>
+                            <Link to="/signup" onClick={() => setMobileMenuOpen(false)} className="px-8 py-3 bg-cyan-500 text-slate-900 rounded-lg font-bold text-xl">
+                                Sign Up
+                            </Link>
+                        </motion.li>
+                    </>
+                )}
             </ul>
           </motion.div>
         )}
