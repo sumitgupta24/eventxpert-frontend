@@ -17,20 +17,33 @@ export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleLogin = async (e) => {
+ // src/pages/Login.jsx
+
+const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
       const { data } = await api.post("/users/login", { email, password });
+      console.log("API Response Data:", data); 
+
       login(data);
       toast.success("Login Successful!");
 
-      if (data.user.role === "student") navigate("/student");
-      else if (data.user.role === "organizer") navigate("/organizer");
-      else if (data.user.role === "admin") navigate("/admin");
-      
+      const userRole = data?.user?.role || data?.role;
+
+      if (userRole === "student") {
+        navigate("/student");
+      } else if (userRole === "organizer") {
+        navigate("/organizer");
+      } else if (userRole === "admin") {
+        navigate("/admin");
+      } else {
+        console.error("User role not found in API response, navigating to home.");
+        navigate("/"); 
+      }
+
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Invalid credentials. Please try again.";
       setError(errorMessage);
@@ -38,7 +51,7 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
-  };
+};
 
   // Helper for consistent input styling
   const inputClasses = "w-full py-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition";
