@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
 export default function Hero() {
-  // Animation variants for a staggered fade-in effect
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -18,7 +17,7 @@ export default function Hero() {
   };
 
   const imageVariants = {
-    hidden: { opacity: 0, scale: 0.95 }, // Slightly less scale from previous
+    hidden: { opacity: 0, scale: 0.95 },
     visible: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: "easeOut" } },
   };
 
@@ -35,7 +34,7 @@ export default function Hero() {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center py-20 lg:py-0" // Added vertical padding for smaller screens
+          className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center py-20 lg:py-0" 
         >
           {/* Left Column: Text Content */}
           <div className="text-center lg:text-left">
@@ -77,15 +76,17 @@ export default function Hero() {
               </Link>
             </motion.div>
           </div>
-          <motion.div variants={imageVariants} className="relative flex items-center justify-center">
+          <motion.div variants={imageVariants}
+            className="relative hidden lg:flex items-center justify-center"
+          >
             <div className="absolute w-full h-full bg-gradient-to-tr from-purple-600/30 to-cyan-600/30 rounded-full filter blur-2xl"></div>
 
             <img
               src="/hero.png"
               alt="Students engaging at a campus event"
               className="relative z-10 w-full max-w-lg mx-auto object-cover opacity-90
-                        [mask-image:radial-gradient(ellipse_at_center,black_60%,transparent_100%)]
-                        [filter:saturate(1.1)contrast(1.1)]"
+                   [mask-image:radial-gradient(ellipse_at_center,black_60%,transparent_100%)]
+                   [filter:saturate(1.1)contrast(1.1)]"
               style={{
                 maskImage: 'radial-gradient(ellipse at center, black 60%, transparent 100%)',
                 WebkitMaskImage: 'radial-gradient(ellipse at center, black 60%, transparent 100%)',
