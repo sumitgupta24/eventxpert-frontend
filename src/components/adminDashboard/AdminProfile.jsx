@@ -9,7 +9,6 @@ const AdminProfile = () => {
     name: "",
     email: "",
     role: "",
-    // avatar: "https://i.pravatar.cc/150?img=5", // Remove avatar for now
   });
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -25,7 +24,6 @@ const AdminProfile = () => {
         name: user.name,
         email: user.email,
         role: user.role,
-        // avatar: user.avatar || "https://i.pravatar.cc/150?img=5",
       });
     }
   }, []);
