@@ -4,9 +4,9 @@ import { CheckCircle, XCircle } from "lucide-react";
 import api from "../../utils/api"; // Import the API instance
 
 const PendingApprovals = ({ pendingEvents, onEventApproved, onEventRejected }) => {
-  const [loadingApproval, setLoadingApproval] = useState(false);
+  const [loadingApproval, setLoadingApproval] = useState(null);
   const [errorApproval, setErrorApproval] = useState(null);
-  const [loadingReject, setLoadingReject] = useState(false);
+  const [loadingReject, setLoadingReject] = useState(null);
   const [errorReject, setErrorReject] = useState(null);
 
   const getAuthHeader = () => {
@@ -24,7 +24,7 @@ const PendingApprovals = ({ pendingEvents, onEventApproved, onEventRejected }) =
   };
 
   const handleApprove = async (eventId) => {
-    setLoadingApproval(true);
+    setLoadingApproval(eventId); // Set ID
     setErrorApproval(null);
     try {
       const config = getAuthHeader();
@@ -35,23 +35,23 @@ const PendingApprovals = ({ pendingEvents, onEventApproved, onEventRejected }) =
     } catch (err) {
       setErrorApproval(err.response && err.response.data.message ? err.response.data.message : err.message);
     } finally {
-      setLoadingApproval(false);
+      setLoadingApproval(null); // Clear ID
     }
   };
 
   const handleReject = async (eventId) => {
-    setLoadingReject(true);
+    setLoadingReject(eventId); // Set ID
     setErrorReject(null);
     try {
       const config = getAuthHeader();
-      await api.put(`/events/${eventId}/reject`, {}, config);
+      await api.delete(`/events/${eventId}`, config); // <-- FIX: Changed to api.delete
       if (onEventRejected) {
         onEventRejected();
       }
     } catch (err) {
       setErrorReject(err.response && err.response.data.message ? err.response.data.message : err.message);
     } finally {
-      setLoadingReject(false);
+      setLoadingReject(null); // Clear ID
     }
   };
 
@@ -112,20 +112,32 @@ const PendingApprovals = ({ pendingEvents, onEventApproved, onEventRejected }) =
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   onClick={() => handleApprove(event._id)}
-                  disabled={loadingApproval || loadingReject}
+                  disabled={!!loadingApproval || !!loadingReject} // Disable if any operation is in progress
                   className="flex items-center gap-1 px-3 py-1 rounded-lg bg-green-600 hover:bg-green-500 transition text-white disabled:opacity-50"
                 >
-                  {loadingApproval ? "Approving..." : <CheckCircle size={16} />} {loadingApproval ? "Approving..." : "Approve"}
+                  {loadingApproval === event._id ? (
+                    "Approving..."
+                  ) : (
+                    <>
+                      <CheckCircle size={16} /> Approve
+                    </>
+                  )}
                 </motion.button>
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   onClick={() => handleReject(event._id)}
-                  disabled={loadingApproval || loadingReject}
+                  disabled={!!loadingApproval || !!loadingReject} // Disable if any operation is in progress
                   className="flex items-center gap-1 px-3 py-1 rounded-lg bg-red-600 hover:bg-red-500 transition text-white disabled:opacity-50"
                 >
-                  {loadingReject ? "Rejecting..." : <XCircle size={16} />} {loadingReject ? "Rejecting..." : "Reject"}
+                  {loadingReject === event._id ? (
+                    "Rejecting..."
+                  ) : (
+                    <>
+                      <XCircle size={16} /> Reject
+                    </>
+                  )}
                 </motion.button>
               </div>
             </motion.div>
