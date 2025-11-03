@@ -369,7 +369,7 @@ const CreateEventCard = ({ onEventCreated }) => {
                     disabled={loading || categoriesLoading}
                     className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg font-medium shadow-md disabled:opacity-50"
                   >
-                    {loading ? "Creating..." : "🚀 Create Event"}
+                    {loading ? "Creating..." : "Create Event"}
                   </motion.button>
                 </form>
               </div>
