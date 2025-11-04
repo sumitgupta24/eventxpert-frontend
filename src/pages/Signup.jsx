@@ -14,7 +14,7 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("student");
-  const [profilePicture, setProfilePicture] = useState("https://i.pravatar.cc/150?img=68");
+  const [profilePicture, setProfilePicture] = useState("https://i.pravatar.cc/150");
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [gender, setGender] = useState("");
   const [rollNo, setRollNo] = useState("");
