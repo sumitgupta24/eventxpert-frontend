@@ -62,7 +62,7 @@ export default function Footer() {
           {/* Logo + Info */}
           <div className="space-y-4">
             <h3 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 text-transparent bg-clip-text">
-                📅 EventXpert
+                EventXpert
             </h3>
             <p className="text-sm text-slate-400">
               The all-in-one platform for intelligent campus event management.
@@ -101,8 +101,8 @@ export default function Footer() {
                 <div>
                     <h3 className="text-sm font-semibold leading-6 text-white">Contact</h3>
                      <div className="mt-6 space-y-4 text-sm text-slate-400">
-                        <p>+91 7061935850</p>
-                        <p>eventxpert@gmail.com</p>
+                        <p>+91 98XXXXXXXX</p>
+                        <p>eventxpert@exp.com</p>
                     </div>
                 </div>
             </div>

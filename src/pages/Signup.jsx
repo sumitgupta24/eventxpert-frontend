@@ -101,7 +101,7 @@ export default function Signup() {
         {/* Left Column: Branding */}
         <div className="hidden lg:flex flex-col justify-center p-12 bg-slate-900/30">
             <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 text-transparent bg-clip-text">
-                📅 EventXpert
+                EventXpert
             </h2>
             <h1 className="mt-4 text-4xl font-bold tracking-tight text-white">
                 Unlock the Future of Campus Events.
