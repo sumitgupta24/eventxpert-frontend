@@ -8,7 +8,7 @@ const statsData = [
     Icon: Users,
     value: 50000, // Use numbers for animation
     label: "Active Students",
-    suffix: "K+",
+    suffix: "+",
   },
   {
     Icon: CalendarCheck,
