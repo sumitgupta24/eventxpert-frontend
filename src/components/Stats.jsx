@@ -2,11 +2,10 @@ import { useEffect, useRef } from "react";
 import { motion, useInView, animate } from "framer-motion";
 import { Users, CalendarCheck, ShieldCheck } from "lucide-react";
 
-// Updated stats data with Lucide icons
 const statsData = [
   {
     Icon: Users,
-    value: 50000, // Use numbers for animation
+    value: 50000,
     label: "Active Students",
     suffix: "+",
   },
@@ -66,15 +65,13 @@ export default function Stats() {
                 <AnimatedNumber 
                     to={stat.value} 
                     suffix={stat.suffix}
-                    decimals={stat.value % 1 !== 0 ? 1 : 0} // Add decimals for numbers like 99.9
+                    decimals={stat.value % 1 !== 0 ? 1 : 0}
                 />
                 <p className="mt-2 flex items-center gap-2 text-lg text-slate-400">
                   <stat.Icon className="h-5 w-5 text-cyan-500" />
                   {stat.label}
                 </p>
               </div>
-
-              {/* Fading gradient divider */}
               {index < statsData.length - 1 && (
                 <div className="w-full h-px md:w-px md:h-24 bg-gradient-to-r from-transparent via-slate-700 to-transparent md:bg-gradient-to-b"></div>
               )}
